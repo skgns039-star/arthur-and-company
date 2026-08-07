@@ -1,0 +1,38 @@
+/* Interaction completion overrides; consumes locked project tokens only. */
+button:active,
+.outline-button:active,
+.solid-button:active,
+.text-link:active {
+  transform: translateY(1px);
+}
+
+button:disabled,
+.outline-button[aria-disabled="true"],
+.solid-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  color: var(--color-muted);
+  border-color: var(--color-rule);
+}
+
+.hero {
+  padding-block-start: clamp(4rem, 7vw, 6rem);
+  padding-block-end: clamp(6rem, 11vw, 9rem);
+}
+
+.field input[type="radio"],
+.field input[type="checkbox"],
+.consent input[type="checkbox"] {
+  width: auto;
+  min-width: 1rem;
+  min-height: 1rem;
+  margin-block-start: 0.3rem;
+  padding: 0;
+  flex: 0 0 auto;
+  accent-color: var(--color-accent);
+}
+
+.radio-row label,
+.consent {
+  align-items: flex-start;
+}
