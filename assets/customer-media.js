@@ -1,6 +1,7 @@
 (() => {
   const lang = document.documentElement.lang;
   const page = document.body.dataset.page;
+  document.title = lang === 'ko' ? '아더앤컴퍼니' : 'Arthur & Company';
   document.documentElement.classList.add('js');
   const asset = (path) => window.SHARE_ASSETS?.[path] || `../assets/media/${path}`;
 
