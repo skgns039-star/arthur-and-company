@@ -575,6 +575,21 @@ body{font-family:var(--font-body);color:var(--color-body-ink)}
  */
 .media:not(.has-image){color:var(--ink-soft)}
 
+/* Mobile footer order 2026-08-28
+ * ---------------------------------------------------------------------------
+ * Stacked, the footer put the wordmark and the company block first, so the
+ * navigation and the language switch sat below the address with a 3rem gap
+ * above them — the reader had to scroll past the legal details to reach the
+ * links. The links move to the top of the footer, the company block follows,
+ * and the gap tightens. Desktop order is untouched.
+ */
+@media (max-width:48rem){
+  .site-footer .footer-grid{gap:var(--space-lg)}
+  .site-footer .footer-links{order:-2}
+  .site-footer .footer-grid>.language-link{order:-1;margin-block-start:calc(-1 * var(--space-sm))}
+  .site-footer .footer-grid>:first-child{order:0}
+}
+
 </style>
 </head>
 <body data-page="home">
