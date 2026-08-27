@@ -6,7 +6,9 @@
   --color-paper: #ffffff;
   --color-paper-2: #f7f7f5;
   --color-ink: #1a1a1a;
-  --color-muted: #767676;
+  /* 2026-08-27 · was #767676, which measured 4.23-4.31:1 on the tinted surfaces
+     (--color-paper-2 and the warm footer). One step darker clears 4.5 on both. */
+  --color-muted: #717171;
   --color-rule: #e5e5e5;
   --color-accent: #6b2130;
   --color-accent-hover: #511923;

@@ -7,7 +7,11 @@
 
   document.querySelectorAll('.wordmark').forEach((node) => {
     const logoSource = asset('company/arthur-lockup.png');
-    node.innerHTML = `<svg class="brand-lockup" viewBox="350 140 580 470" role="img" aria-label="ARTHUR&CO"><image href="${logoSource}" width="1280" height="747"></image></svg>`;
+    // Header carries the text-only wordmark; the footer keeps the full emblem lockup.
+    const textOnly = !!node.closest('.site-header');
+    const viewBox = textOnly ? '441 518 407 67' : '350 140 580 470';
+    const variant = textOnly ? ' brand-lockup--text' : '';
+    node.innerHTML = `<svg class="brand-lockup${variant}" viewBox="${viewBox}" role="img" aria-label="ARTHUR&CO"><image href="${logoSource}" width="1280" height="747"></image></svg>`;
   });
 
   const sharedFooter = document.querySelector('.site-footer');
@@ -51,7 +55,7 @@
         if (!entry.isIntersecting) return;
         entry.target.classList.add('is-footer-visible');
         footerObserver.unobserve(entry.target);
-      }), { threshold: .12, rootMargin: '0px 0px -4% 0px' });
+      }), { threshold: 0, rootMargin: '0px 0px -4% 0px' });
       footerObserver.observe(sharedFooter);
     }
   }
@@ -64,7 +68,14 @@
       if (!entry.isIntersecting) return;
       entry.target.classList.add('is-visible');
       observer.unobserve(entry.target);
-    }), { threshold: .08, rootMargin: '0px 0px -8% 0px' });
+      // A ratio threshold is unreachable once the target is taller than the
+      // viewport: the press section is 9198px, so on a 773px window the best
+      // possible ratio is 0.077 and a 0.08 threshold never fires, leaving the
+      // whole section at opacity 0 however far the reader scrolls. For a scroll
+      // reveal the correct trigger is 'any part has entered', which is height
+      // independent; the negative rootMargin still holds it until the element is
+      // properly inside the viewport.
+    }), { threshold: 0, rootMargin: '0px 0px -8% 0px' });
     revealTargets.forEach((node) => observer.observe(node));
   }
 
@@ -90,7 +101,6 @@
     channelsLead: '전달받은 회사 안내 자료와 유통채널 로고를 기준으로 정리했습니다.',
     locationsTitle: '오프라인 운영 현장',
     locationsLead: '면세점과 오프라인 매장에서 운영 중인 브랜드 현장입니다.',
-    locationNames: ['Disney Store · 제주', 'VERUTUM · 부산', 'DINECH · 나트랑', 'TOUS / DINECH · 제주', 'HYERES LOR · 인천', 'SSIL · 인천'],
     business: [
       ['브랜드 발굴', '성장 가능성이 높은 브랜드를 발굴하고 국내 시장 적합성을 검토합니다.'],
       ['시장 조사', '시장 흐름과 경쟁 환경을 분석해 브랜드의 진입 방향을 설계합니다.'],
@@ -107,7 +117,6 @@
     channelsLead: 'Organized from the supplied company introduction and channel assets.',
     locationsTitle: 'Retail presence',
     locationsLead: 'A selection of brand operations across duty-free and offline retail locations.',
-    locationNames: ['Disney Store · Jeju', 'VERUTUM · Busan', 'DINECH · Nha Trang', 'TOUS / DINECH · Jeju', 'HYERES LOR · Incheon', 'SSIL · Incheon'],
     business: [
       ['Brand discovery', 'Identify promising brands and assess their fit for the Korean market.'],
       ['Market research', 'Study market dynamics and competition to define the right entry path.'],
@@ -118,12 +127,9 @@
     ]
   };
 
-  const channelFiles = [
-    'local-29cm.png','local-Hmall.png','local-kakaotalk-선물하기.png','local-SSG.png','local-W컨셉.png','local-롯데백화점몰.png','local-롯데온.png','local-롯데홈쇼핑.png','local-무신사.png','local-스마트스토어.png','local-한섬-EQL.png',
-    'dutyfree-면세점-JTO.png','dutyfree-면세점-SSG.png','dutyfree-면세점-대한항공.png','dutyfree-면세점-롯데.png','dutyfree-면세점-신라.png','dutyfree-면세점-현대.png'
-  ];
-  const locations = ['disney-store.jpg','verutum.jpg','dinech.jpg','tous-dinech.jpg','hyeres-lor.jpg','ssil.jpg'];
-  const html = `<section class="section evidence-section"><div class="shell"><p class="section-kicker">${copy.kicker}</p><div class="section-head"><h2>${copy.businessTitle}</h2><p>${copy.businessLead}</p></div><div class="business-grid">${copy.business.map((item,index)=>`<article class="business-item"><span class="index">0${index+1}</span><h3>${item[0]}</h3><p>${item[1]}</p></article>`).join('')}</div></div></section><section class="section section--tint evidence-section"><div class="shell"><div class="section-head"><h2>${copy.channelsTitle}</h2><p>${copy.channelsLead}</p></div><div class="channel-grid">${channelFiles.map(file=>`<div class="channel-card"><img src="${asset(`channels/${file}`)}" alt="${file.replace(/^(local-|dutyfree-면세점-)|\.[^.]+$/g,'')}"></div>`).join('')}</div></div></section><section class="section evidence-section"><div class="shell"><div class="section-head"><h2>${copy.locationsTitle}</h2><p>${copy.locationsLead}</p></div><div class="location-grid">${locations.map((file,index)=>`<figure class="location-card"><img src="${asset(`locations/${file}`)}" alt="${copy.locationNames[index]}"><figcaption>${copy.locationNames[index]}</figcaption></figure>`).join('')}</div></div></section>`;
+  const channelCards = [...SITE_DATA.channels.local, ...SITE_DATA.channels.dutyfree];
+  const locationCards = SITE_DATA.locations;
+  const html = `<section class="section evidence-section"><div class="shell"><p class="section-kicker">${copy.kicker}</p><div class="section-head"><h2>${copy.businessTitle}</h2><p>${copy.businessLead}</p></div><div class="business-grid">${copy.business.map((item,index)=>`<article class="business-item"><span class="index">0${index+1}</span><h3>${item[0]}</h3><p>${item[1]}</p></article>`).join('')}</div></div></section><section class="section section--tint evidence-section"><div class="shell"><div class="section-head"><h2>${copy.channelsTitle}</h2><p>${copy.channelsLead}</p></div><div class="channel-grid">${channelCards.map(c=>`<div class="channel-card"><img src="${asset(c.image)}" alt="${c.label}" loading="lazy"></div>`).join('')}</div></div></section><section class="section evidence-section"><div class="shell"><div class="section-head"><h2>${copy.locationsTitle}</h2><p>${copy.locationsLead}</p></div><div class="location-grid">${locationCards.map(l=>{const venue=lang==='ko'?l.venue:(l.venueEn||l.venue);return `<figure class="location-card"><img src="${asset(l.image)}" alt="${l.brand} · ${venue}" loading="lazy"><figcaption><strong>${l.brand}</strong><span>${venue}</span></figcaption></figure>`}).join('')}</div></div></section>`;
   document.querySelector('main').insertAdjacentHTML('beforeend', html);
 
   const evidenceSections = document.querySelectorAll('.evidence-section');
@@ -137,7 +143,7 @@
       if (!entry.isIntersecting) return;
       entry.target.classList.add('is-visible');
       mediaObserver.unobserve(entry.target);
-    }), { threshold: .18 });
+    }), { threshold: 0, rootMargin: '0px 0px -12% 0px' });
     document.querySelectorAll('.media-clip').forEach((image) => mediaObserver.observe(image));
   } else document.querySelectorAll('.media-clip').forEach((image) => image.classList.add('is-visible'));
 

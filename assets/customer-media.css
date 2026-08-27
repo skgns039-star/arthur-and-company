@@ -1,7 +1,7 @@
 /* Hallmark · macrostructure: Catalogue · tone: editorial restraint · anchor hue: teal
  * pre-emit critique: P5 H5 E4 S5 R5 V4
  */
-:root{--ci-navy:#28334a;--ci-gold:#a08629;--ci-teal:#1c6d6a;--surface-white:#fff;--surface-warm:#faf9f5;--surface-dark:#11141a;--ink-soft:#606672;--line-soft:rgba(40,51,74,.14);--line-medium:rgba(40,51,74,.16);--header-glass:rgba(255,255,255,.96);--shadow-soft:rgba(40,51,74,.08);--backdrop-dark:rgba(17,20,26,.86);--light-border:rgba(255,255,255,.4);--measure:68ch;--motion-fast:180ms;--motion-base:520ms;--motion-slow:760ms;--motion-ease:cubic-bezier(.22,1,.36,1);--shadow-float:0 18px 42px var(--line-soft)}
+:root{--ci-navy:#28334a;--ci-navy-hover:#1e2636;--ci-gold:#a08629;--ci-teal:#1c6d6a;--surface-white:#fff;--surface-warm:#faf9f5;--surface-dark:#11141a;--ink-soft:#606672;--line-soft:rgba(40,51,74,.14);--line-medium:rgba(40,51,74,.16);--header-glass:rgba(255,255,255,.96);--shadow-soft:rgba(40,51,74,.08);--backdrop-dark:rgba(17,20,26,.86);--light-border:rgba(255,255,255,.4);--measure:68ch;--motion-fast:180ms;--motion-base:520ms;--motion-slow:760ms;--motion-ease:cubic-bezier(.22,1,.36,1);--shadow-float:0 18px 42px var(--line-soft)}
 html{font-size:16px;text-rendering:optimizeLegibility}
 body{font-family:var(--font-body);color:var(--color-body-ink);letter-spacing:-.012em}
 [lang="en"] body{letter-spacing:-.006em}
@@ -24,10 +24,10 @@ p,li{line-height:1.76;word-break:keep-all;overflow-wrap:anywhere}
 .section-head{align-items:end;gap:clamp(1.25rem,4vw,4.5rem)}
 .section-head>p{max-width:42ch;margin-left:auto}
 .evidence-section{border-top:1px solid var(--line-soft)}
-.evidence-section .section-kicker{color:var(--ci-teal);font-size:.76rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.evidence-section .section-kicker{color:var(--color-accent);font-size:.76rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
 .business-grid{display:block;background:transparent;border:0}
 .business-item{background:var(--surface-white);padding:clamp(1.35rem,2.5vw,2.2rem);min-height:190px;transition:background-color var(--motion-fast) var(--motion-ease),transform var(--motion-fast) var(--motion-ease)}
-.business-item .index{color:var(--ci-gold);font-variant-numeric:tabular-nums;font-size:.78rem}
+.business-item .index{color:var(--color-accent);font-variant-numeric:tabular-nums;font-size:.78rem}
 .business-item h3{margin:.65rem 0 .7rem;color:var(--ci-navy)}
 .business-item p{margin:0;color:var(--ink-soft);font-size:.94rem}
 .channel-grid{display:flex;flex-wrap:wrap;gap:var(--space-xs);background:transparent;border:0}
@@ -51,17 +51,17 @@ p,li{line-height:1.76;word-break:keep-all;overflow-wrap:anywhere}
 .hero-copy{position:relative;z-index:2;padding-right:min(28vw,24rem)}
 .hero h1{font-size:var(--text-display);line-height:.96;letter-spacing:-.058em;max-width:11ch}
 .hero p{color:var(--surface-white);opacity:.74;font-size:clamp(1rem,1.5vw,1.25rem);max-width:46ch}
-.hero .eyebrow{color:var(--ci-gold);font-weight:500}
+.hero .eyebrow{color:var(--color-accent-on-dark);font-weight:500}
 .hero-emblem{position:absolute;z-index:1;right:clamp(-5rem,2vw,2rem);bottom:clamp(-2rem,2vw,2rem);width:clamp(17rem,38vw,39rem);opacity:.13;mix-blend-mode:screen}
 .page-hero{position:relative;padding-block:clamp(7rem,15vw,13rem);background:var(--surface-warm)}
 .page-hero h1{font-size:var(--text-display-small);line-height:1;letter-spacing:-.052em;max-width:13ch}
 .page-hero>div{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:var(--space-md);max-width:58rem}
-.page-hero .eyebrow{grid-column:auto;color:var(--ci-teal);font-weight:500}
+.page-hero .eyebrow{grid-column:auto;color:var(--color-accent);font-weight:500}
 .page-hero>div>p:last-child{margin-left:auto}
 .section:nth-of-type(even):not(.section--tint){background:inherit}
 .section-head h2{font-size:clamp(2rem,4.8vw,4.5rem);line-height:1.02;letter-spacing:-.05em;max-width:13ch}
 .brand-card{position:relative;padding-top:var(--space-md);transition:transform var(--dur-short) var(--ease-out),border-color var(--dur-short) var(--ease-out)}
-.brand-card::before{content:attr(data-index);display:block;color:var(--ci-gold);font-size:.72rem;margin-bottom:var(--space-sm)}
+.brand-card::before{content:attr(data-index);display:block;color:var(--color-accent);font-size:.72rem;margin-bottom:var(--space-sm)}
 .brand-card:hover{border-color:var(--ci-gold);transform:translateY(-6px)}
 .brand-card .media{transition:background-color var(--dur-base) var(--ease-out)}
 .brand-card:hover .media{background:var(--ci-navy);color:var(--surface-white)}
@@ -82,7 +82,7 @@ p,li{line-height:1.76;word-break:keep-all;overflow-wrap:anywhere}
 .location-card img:focus-visible{outline:2px solid var(--color-focus);outline-offset:3px}.location-card img:active{filter:saturate(.8)}
 .outline-button:active,.solid-button:active,.text-link:active,.image-viewer button:active{transform:translateY(1px)}
 .stat strong{color:var(--ci-navy);transform-origin:left bottom}
-.stat strong.is-counting{color:var(--ci-teal)}
+.stat strong.is-counting{color:var(--color-accent)}
 .stat strong.is-counted{animation:counter-settle var(--dur-short) var(--ease-out)}
 @keyframes counter-settle{from{opacity:.72;transform:translateY(5px)}to{opacity:1;transform:none}}
 button:disabled,a[aria-disabled="true"],input:disabled,select:disabled,textarea:disabled{opacity:.55;cursor:not-allowed;pointer-events:none}
@@ -259,3 +259,203 @@ body{font-family:var(--font-body);color:var(--color-body-ink)}
 @media(max-width:59.999rem){
   .section-head{grid-template-columns:minmax(0,1fr)!important;max-width:42rem}
 }
+
+/* Customer revision · 수정사항.xlsx (2026-08-26)
+ * 1) 서브 페이지 메인 텍스트의 초록색 → 기존 와인색(--color-accent)
+ * 2) 문의 보내기 버튼 와인색 → 남색(--ci-navy)
+ * 3) 메인 문구 좌측 기준선을 아래 섹션 제목과 동일한 그리드에 정렬
+ * 4) 헤더 로고는 텍스트 전용 워드마크(푸터는 기존 독수리 락업 유지)
+ */
+/* 2026-08-27 · user instruction reverses 수정사항.xlsx #2 (wine -> navy): the CTA
+ * goes back to burgundy. --color-accent is the locked brand wine, #6b2130.
+ */
+.contact-form .solid-button{background:var(--color-accent);border-color:var(--color-accent);color:var(--color-accent-ink)}
+.contact-form .solid-button:hover{background:var(--color-accent-hover);border-color:var(--color-accent-hover)}
+.contact-form .solid-button:focus-visible{outline-color:var(--color-accent)}
+.hero-copy{max-width:none}
+.page-hero>div{max-width:none}
+.brand-lockup--text{width:clamp(122px,10.5vw,158px)}
+/* Hallmark audit 2026-08-26 · alignment follow-through
+ * `.shell.prose` carried the reading measure on the shell itself, so the grid box
+ * shrank and centred: 회사소개 intro sat 306px inside the page baseline while every
+ * other section started on it. Measure moves to the paragraphs; the shell keeps
+ * the grid. Same correction as `.hero-copy` / `.page-hero>div` above.
+ */
+.shell.prose{max-width:none}
+.shell.prose>p{max-width:var(--measure-body-ko)}
+[lang="en"] .shell.prose>p{max-width:var(--measure-body-en)}
+
+/* Hallmark audit 2026-08-26 · unintended inheritance on the hero eyebrow
+ * `.hero p` was written for the lede, but the eyebrow is also a <p>, so it picked up
+ * the 74% dimming meant for supporting copy. Gold at .74 over navy measured 2.59:1.
+ * The eyebrow is a label, not supporting copy — it renders at full strength.
+ */
+.hero .eyebrow{opacity:1}
+/* `--color-muted` clears 4.5:1 on white paper but only reaches 4.31:1 on the warm
+ * footer surface. `--ink-soft` is the existing darker neutral; no new colour added.
+ */
+.site-footer .company-info{color:var(--ink-soft)}
+
+/* 2026-08-27 customer delivery · real photography replaces the pending-image boxes
+ * ---------------------------------------------------------------------------
+ * The delivery ships two frames per brand: `-1` carries the logo lock-up and is the
+ * resting state, `-2` is the bare product shot revealed on hover. That is the
+ * behaviour the customer's 시안 / 시안-마우스오버 comps specify, so the swap is a
+ * cross-fade on one stacked box rather than a second layout.
+ */
+.media.has-image{position:relative;display:block;background:var(--color-paper-2);color:transparent}
+.brand-shot{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover}
+.brand-shot--hover{opacity:0;transition:opacity var(--dur-base) var(--ease-out)}
+.brand-card:hover .brand-shot--hover,.brand-card:focus-within .brand-shot--hover{opacity:1}
+.brand-card:hover .media.has-image,.press-card .media.has-image{background:var(--color-paper-2)}
+
+/* Brand summary sits on both white and tint surfaces, so it uses the darker neutral
+ * rather than `--color-muted`, which only clears 4.5:1 on white paper.
+ */
+.brand-card .brand-summary{margin:var(--space-2xs) 0 var(--space-sm);
+  max-width:var(--measure-lead);color:var(--ink-soft);
+  font-size:var(--text-body-small);line-height:var(--leading-body-ko)}
+[lang="en"] .brand-card .brand-summary{line-height:var(--leading-body-en)}
+
+/* Dialogs now carry long article and gallery content and must scroll inside the box. */
+.dialog-inner{overflow-y:auto;max-height:80dvh}
+.dialog-inner h2{margin:var(--space-2xs) 0 var(--space-sm);line-height:var(--leading-heading)}
+.dialog-inner h3{margin:var(--space-lg) 0 var(--space-sm);font-size:1rem;font-weight:600;
+  letter-spacing:.02em;line-height:var(--leading-heading)}
+.dialog-inner p{max-width:var(--measure-body-ko);line-height:var(--leading-body-ko)}
+[lang="en"] .dialog-inner p{max-width:var(--measure-body-en);line-height:var(--leading-body-en)}
+.dialog-inner .byline{color:var(--ink-soft);font-size:var(--text-caption);
+  margin-block:0 var(--space-md)}
+.press-figure{display:block;width:100%;height:auto;margin-block:var(--space-md);
+  background:var(--color-paper-2)}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(11rem,1fr));
+  gap:var(--space-xs)}
+.gallery-grid img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;
+  background:var(--color-paper-2)}
+.channel-grid--compact .channel-card{flex:0 1 7rem;min-width:7rem;min-height:5rem;
+  padding:var(--space-xs)}
+.channel-grid--compact .channel-card:nth-child(n){flex:0 1 7rem;min-width:7rem}
+
+/* Articles the customer linked but did not supply copy for: the link is the whole
+ * record, so it renders as a list of sources rather than as an empty card.
+ */
+.source-list{margin-block-start:var(--space-2xl);padding-block-start:var(--space-md);
+  border-block-start:1px solid var(--color-grid-rule)}
+.source-list h2{font-size:1rem;font-weight:600;letter-spacing:.02em;
+  line-height:var(--leading-heading);margin:0 0 var(--space-sm)}
+.source-list ul{list-style:none;margin:0;padding:0}
+.source-list li{display:flex;flex-wrap:wrap;gap:var(--space-sm);align-items:baseline;
+  padding-block:var(--space-xs);border-block-end:1px solid var(--color-grid-rule-soft)}
+.source-list li span{min-width:8rem;color:var(--ink-soft);font-size:var(--text-caption)}
+
+/* The delivery supplies brand and venue separately, so the caption sets them as two
+ * lines instead of one run-on string.
+ */
+.location-card figcaption{display:flex;flex-direction:column;gap:var(--space-3xs)}
+.location-card figcaption strong{font-weight:600;color:var(--color-body-ink)}
+.location-card figcaption span{font-size:var(--text-caption);line-height:1.5;
+  color:var(--ink-soft)}
+
+@media (prefers-reduced-motion: reduce){
+  .brand-shot--hover{transition:none}
+}
+
+/* Brand summaries differ in length, so the link row and the detail button used to
+ * land at a different height on every card in a row. The card becomes a column and
+ * pushes its actions to the bottom, restoring one shared baseline per row.
+ */
+.brand-card{display:flex;flex-direction:column}
+.brand-card .brand-summary{flex:1 1 auto}
+.brand-card .link-row{margin-block-start:auto}
+.brand-card .brand-open{align-self:flex-start;margin-block-start:var(--space-xs)}
+
+/* Motion pass 2026-08-27 · design-motion-principles, Jakub primary / Emil secondary
+ * ---------------------------------------------------------------------------
+ * Frequency gate (Emil) decided what animates at all:
+ *   brand card cross-fade  — the customer's 시안 specifies it; animate, but short
+ *   dialog open / close    — rare, orientation-carrying; animate with the enter recipe
+ *   gallery + press images — passive content; no entrance motion (stagger would be slop)
+ * Everything below animates only transform / opacity / filter.
+ */
+:root{--color-accent-on-dark:#dabec4;--dur-swap:260ms;--dur-dialog:340ms;--dur-dialog-out:200ms;
+  --backdrop-clear:rgba(17,20,26,0)}
+
+/* 520ms was the section-reveal duration and read as a lag on a pointer-driven
+ * cross-fade. Only the top frame animates, so the two photos never double-expose.
+ */
+.brand-shot--hover{transition:opacity var(--dur-swap) var(--ease-out)}
+
+/* Enter: opacity + 8px rise + 4px blur, materialising into focus.
+ * Exit: half the movement, half the blur, shorter — the user is already moving on.
+ */
+#brand-dialog,#press-dialog,.image-viewer{
+  opacity:0;transform:translateY(4px);filter:blur(2px);
+  transition:opacity var(--dur-dialog-out) var(--ease-out),
+             transform var(--dur-dialog-out) var(--ease-out),
+             filter var(--dur-dialog-out) var(--ease-out),
+             overlay var(--dur-dialog-out) allow-discrete,
+             display var(--dur-dialog-out) allow-discrete}
+#brand-dialog[open],#press-dialog[open],.image-viewer[open]{
+  opacity:1;transform:none;filter:blur(0);
+  transition-duration:var(--dur-dialog)}
+@starting-style{
+  #brand-dialog[open],#press-dialog[open],.image-viewer[open]{
+    opacity:0;transform:translateY(8px);filter:blur(4px)}
+}
+#brand-dialog::backdrop,#press-dialog::backdrop{
+  background:var(--backdrop-clear);
+  transition:background-color var(--dur-dialog-out) var(--ease-out),
+             overlay var(--dur-dialog-out) allow-discrete,
+             display var(--dur-dialog-out) allow-discrete}
+#brand-dialog[open]::backdrop,#press-dialog[open]::backdrop{
+  background:var(--backdrop-dark);transition-duration:var(--dur-dialog)}
+@starting-style{
+  #brand-dialog[open]::backdrop,#press-dialog[open]::backdrop{background:var(--backdrop-clear)}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .brand-shot--hover,
+  #brand-dialog,#press-dialog,.image-viewer,
+  #brand-dialog::backdrop,#press-dialog::backdrop{transition:none}
+  #brand-dialog,#press-dialog,.image-viewer{opacity:1;transform:none;filter:none}
+}
+
+/* Responsive audit 2026-08-27 · findings fixed
+ * ---------------------------------------------------------------------------
+ * 1. The header wordmark is the site's home link but measured 122x20 — below the
+ *    24px WCAG 2.5.8 minimum, and awkward to hit on a phone. The logo keeps its
+ *    drawn size; padding grows the hit area around it.
+ */
+.site-header .wordmark{display:flex;align-items:center;min-height:2.75rem;
+  padding-inline-end:var(--space-2xs)}
+
+/* 2. The customer's brand card frames ship at 384x288. Between 40rem and 48rem the
+ *    mobile rail column reached 630px and upscaled them 1.6x, which read as soft.
+ *    Capping the column at 26rem holds the upscale near 1:1 and still shows the
+ *    next card edge, so the rail still reads as scrollable.
+ */
+@media (min-width:40rem) and (max-width:48rem){
+  .rail{grid-auto-columns:minmax(min(60%,26rem),1fr)}
+}
+
+/* 3. The footer language switch measured 280x23 — under the 24px minimum. It sits
+ *    on its own row, so height can grow without disturbing the footer grid.
+ */
+
+/* 4. Desktop nav links measured 23px tall — fine for a mouse, tight on a 1024px
+ *    touch tablet. The header row is 76px, so the hit area grows inside it and the
+ *    header's own height and the links' visual weight are unchanged.
+ */
+.site-header .nav-link{display:inline-flex;align-items:center;min-height:2.75rem}
+/* "EN" is only 19px of glyph, under the 24px minimum width, so the language switch
+ * also needs a floor on its inline axis. It is centred, so the label does not move.
+ */
+.language-link{display:inline-flex;align-items:center;justify-content:center;
+  min-height:2.75rem;min-width:2.75rem}
+.site-footer .language-link{justify-content:flex-start}
+
+/* Hallmark 2026-08-27 · the pending-image note sits on --color-paper-2, where
+ * --color-muted measures 4.23:1. --ink-soft is the existing darker neutral.
+ */
+.media:not(.has-image){color:var(--ink-soft)}
