@@ -1,7 +1,7 @@
 /* Hallmark · macrostructure: Catalogue · tone: editorial restraint · anchor hue: teal
  * pre-emit critique: P5 H5 E4 S5 R5 V4
  */
-:root{--ci-navy:#28334a;--ci-navy-hover:#1e2636;--ci-gold:#a08629;--ci-teal:#1c6d6a;--surface-white:#fff;--surface-warm:#faf9f5;--surface-dark:#11141a;--ink-soft:#606672;--line-soft:rgba(40,51,74,.14);--line-medium:rgba(40,51,74,.16);--header-glass:rgba(255,255,255,.96);--shadow-soft:rgba(40,51,74,.08);--backdrop-dark:rgba(17,20,26,.86);--light-border:rgba(255,255,255,.4);--measure:68ch;--motion-fast:180ms;--motion-base:520ms;--motion-slow:760ms;--motion-ease:cubic-bezier(.22,1,.36,1);--shadow-float:0 18px 42px var(--line-soft)}
+:root{--ci-navy:#28334a;--ci-navy-hover:#1e2636;--ci-gold:#a08629;/* retired 2026-08-28: every use moved to --color-accent */--ci-teal:#1c6d6a;--surface-white:#fff;--surface-warm:#faf9f5;--surface-dark:#11141a;--ink-soft:#606672;--line-soft:rgba(40,51,74,.14);--line-medium:rgba(40,51,74,.16);--header-glass:rgba(255,255,255,.96);--shadow-soft:rgba(40,51,74,.08);--backdrop-dark:rgba(17,20,26,.86);--light-border:rgba(255,255,255,.4);--measure:68ch;--motion-fast:180ms;--motion-base:520ms;--motion-slow:760ms;--motion-ease:cubic-bezier(.22,1,.36,1);--shadow-float:0 18px 42px var(--line-soft)}
 html{font-size:16px;text-rendering:optimizeLegibility}
 body{font-family:var(--font-body);color:var(--color-body-ink);letter-spacing:-.012em}
 [lang="en"] body{letter-spacing:-.006em}
@@ -18,7 +18,7 @@ p,li{line-height:1.76;word-break:keep-all;overflow-wrap:anywhere}
 .site-header{transition:box-shadow var(--motion-fast) var(--motion-ease),background-color var(--motion-fast) var(--motion-ease)}
 .site-header.is-scrolled{box-shadow:0 8px 30px var(--shadow-soft);background:var(--header-glass)}
 .nav-link{position:relative}
-.nav-link::after{content:"";position:absolute;inset:auto 0 -.42rem;height:1px;background:var(--ci-gold);transform:scaleX(0);transform-origin:right;transition:transform var(--motion-fast) var(--motion-ease)}
+.nav-link::after{content:"";position:absolute;inset:auto 0 -.42rem;height:1px;background:var(--color-accent);transform:scaleX(0);transform-origin:right;transition:transform var(--motion-fast) var(--motion-ease)}
 .nav-link:hover::after,.nav-link:focus-visible::after,.nav-link[aria-current="page"]::after{transform:scaleX(1);transform-origin:left}
 .hero-copy{transition:transform var(--motion-slow) var(--motion-ease)}
 .section-head{align-items:end;gap:clamp(1.25rem,4vw,4.5rem)}
@@ -43,7 +43,7 @@ p,li{line-height:1.76;word-break:keep-all;overflow-wrap:anywhere}
 @media(prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none}.location-card img,.channel-card img,.business-item,.site-header,.nav-link::after{transition:none!important}}
 
 /* design.md · premium editorial interaction layer */
-.scroll-progress{position:fixed;inset:0 auto auto 0;z-index:40;width:100%;height:2px;transform:scaleX(0);transform-origin:left;background:var(--ci-gold);pointer-events:none}
+.scroll-progress{position:fixed;inset:0 auto auto 0;z-index:40;width:100%;height:2px;transform:scaleX(0);transform-origin:left;background:var(--color-accent);pointer-events:none}
 .site-header .header-row{transition:min-height var(--dur-short) var(--ease-out)}
 .site-header.is-scrolled .header-row{min-height:3.85rem}
 .hero{position:relative;isolation:isolate;overflow:hidden;background:var(--ci-navy);color:var(--surface-white);min-height:min(58rem,calc(100dvh - 4.75rem))}
@@ -62,7 +62,7 @@ p,li{line-height:1.76;word-break:keep-all;overflow-wrap:anywhere}
 .section-head h2{font-size:clamp(2rem,4.8vw,4.5rem);line-height:1.02;letter-spacing:-.05em;max-width:13ch}
 .brand-card{position:relative;padding-top:var(--space-md);transition:transform var(--dur-short) var(--ease-out),border-color var(--dur-short) var(--ease-out)}
 .brand-card::before{content:attr(data-index);display:block;color:var(--color-accent);font-size:.72rem;margin-bottom:var(--space-sm)}
-.brand-card:hover{border-color:var(--ci-gold);transform:translateY(-6px)}
+.brand-card:hover{border-color:var(--color-accent);transform:translateY(-6px)}
 .brand-card .media{transition:background-color var(--dur-base) var(--ease-out)}
 .brand-card:hover .media{background:var(--ci-navy);color:var(--surface-white)}
 .location-card{overflow:hidden}.location-card figcaption{background:var(--surface-white);position:relative;z-index:2}
@@ -157,7 +157,7 @@ p,li{line-height:var(--leading-body-ko)}
  * Pre-emit critique: P4 H4 E5 S4 R5 V4
  */
 .nav-link::after{content:none}
-.nav-link::before{content:"";position:absolute;inline-size:.32rem;block-size:.32rem;border-radius:50%;background:var(--ci-gold);inset-inline-start:50%;inset-block-end:-.5rem;opacity:0;transform:translate(-50%,.2rem) scale(.6);transition:opacity var(--dur-short) var(--ease-out),transform var(--dur-short) var(--ease-out)}
+.nav-link::before{content:"";position:absolute;inline-size:.32rem;block-size:.32rem;border-radius:50%;background:var(--color-accent);inset-inline-start:50%;inset-block-end:-.5rem;opacity:0;transform:translate(-50%,.2rem) scale(.6);transition:opacity var(--dur-short) var(--ease-out),transform var(--dur-short) var(--ease-out)}
 .nav-link:hover::before,.nav-link:focus-visible::before,.nav-link[aria-current="page"]::before{opacity:1;transform:translate(-50%,0) scale(1)}
 @media(prefers-reduced-motion:reduce){.nav-link::before{transition:none}}
 
@@ -436,7 +436,7 @@ body{font-family:var(--font-body);color:var(--color-body-ink)}
  *    next card edge, so the rail still reads as scrollable.
  */
 @media (min-width:40rem) and (max-width:48rem){
-  .rail{grid-auto-columns:minmax(min(60%,26rem),1fr)}
+  .rail{grid-auto-columns:minmax(min(60%,20rem),1fr)}
 }
 
 /* 3. The footer language switch measured 280x23 — under the 24px minimum. It sits
