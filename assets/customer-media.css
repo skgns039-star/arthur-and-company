@@ -389,20 +389,34 @@ body{font-family:var(--font-body);color:var(--color-body-ink)}
 /* Enter: opacity + 8px rise + 4px blur, materialising into focus.
  * Exit: half the movement, half the blur, shorter — the user is already moving on.
  */
-#brand-dialog,#press-dialog,.image-viewer{
+#brand-dialog,#press-dialog{
   opacity:0;transform:translateY(4px);filter:blur(2px);
   transition:opacity var(--dur-dialog-out) var(--ease-out),
              transform var(--dur-dialog-out) var(--ease-out),
              filter var(--dur-dialog-out) var(--ease-out),
              overlay var(--dur-dialog-out) allow-discrete,
              display var(--dur-dialog-out) allow-discrete}
-#brand-dialog[open],#press-dialog[open],.image-viewer[open]{
+#brand-dialog[open],#press-dialog[open]{
   opacity:1;transform:none;filter:blur(0);
   transition-duration:var(--dur-dialog)}
 @starting-style{
-  #brand-dialog[open],#press-dialog[open],.image-viewer[open]{
+  #brand-dialog[open],#press-dialog[open]{
     opacity:0;transform:translateY(8px);filter:blur(4px)}
 }
+/* 큰 사진 보기(2026-10-25 대표님 "수정해"): 크롬 휴대폰에서 blur 필터가 끝나는 순간 어두운 판이
+ * 한 프레임에 나타나 튀었다. 사진 창과 뒤 배경은 투명도만 함께 바꾼다(디졸브). */
+.image-viewer{opacity:0;
+  transition:opacity var(--dur-dialog-out) var(--ease-out),
+             overlay var(--dur-dialog-out) allow-discrete,
+             display var(--dur-dialog-out) allow-discrete}
+.image-viewer[open]{opacity:1;transition-duration:var(--dur-dialog)}
+@starting-style{.image-viewer[open]{opacity:0}}
+.image-viewer::backdrop{opacity:0;
+  transition:opacity var(--dur-dialog-out) var(--ease-out),
+             overlay var(--dur-dialog-out) allow-discrete,
+             display var(--dur-dialog-out) allow-discrete}
+.image-viewer[open]::backdrop{opacity:1;transition-duration:var(--dur-dialog)}
+@starting-style{.image-viewer[open]::backdrop{opacity:0}}
 #brand-dialog::backdrop,#press-dialog::backdrop{
   background:var(--backdrop-clear);
   transition:background-color var(--dur-dialog-out) var(--ease-out),
@@ -415,10 +429,13 @@ body{font-family:var(--font-body);color:var(--color-body-ink)}
 }
 
 @media (prefers-reduced-motion: reduce){
-  .brand-shot--hover,
+  .brand-shot--hover{transition:none}
+  /* 동작 줄이기는 움직임만 없앤다. 창은 한 번에 나타나지 않고 짧게 디졸브한다(D69). */
+  #brand-dialog,#press-dialog,#brand-dialog[open],#press-dialog[open]{transform:none;filter:none}
+  @starting-style{#brand-dialog[open],#press-dialog[open]{transform:none;filter:none}}
   #brand-dialog,#press-dialog,.image-viewer,
-  #brand-dialog::backdrop,#press-dialog::backdrop{transition:none}
-  #brand-dialog,#press-dialog,.image-viewer{opacity:1;transform:none;filter:none}
+  #brand-dialog::backdrop,#press-dialog::backdrop,.image-viewer::backdrop{
+    transition-property:opacity,background-color,overlay,display}
 }
 
 /* Responsive audit 2026-08-27 · findings fixed
@@ -474,3 +491,31 @@ body{font-family:var(--font-body);color:var(--color-body-ink)}
   .site-footer .footer-grid>.language-link{order:-1;margin-block-start:calc(-1 * var(--space-sm))}
   .site-footer .footer-grid>:first-child{order:0}
 }
+
+/* Customer revision 2026-10-25 · 261008 디자인 수정사항 1.xlsx (위젯 W2–W6)
+ * W2·W4 홈 면세 비즈니스, 브랜드 페이지 두 섹션의 부제를 2단 배치에서만 콘텐츠 오른쪽 끝에 맞춘다.
+ * W3 홈 독점 유통 카드는 채널 링크를 브랜드명 바로 아래에서 시작한다(브랜드 페이지 카드는 그대로).
+ * W5·W6 큰 사진 보기 대상은 회사소개 현장 사진과 같은 커서·초점 표시를 쓴다.
+ */
+@media(min-width:60rem){
+  body[data-page="home"] .section--tint .section-head>p,
+  body[data-page="brands"] .section-head>p{justify-self:end;text-align:end}
+}
+body[data-page="home"] .brand-card .link-row{margin-block-start:0}
+#brand-dialog .gallery-grid img,.lookbook-grid img{cursor:zoom-in}
+#brand-dialog .gallery-grid img:focus-visible,.lookbook-grid img:focus-visible{outline:2px solid var(--color-focus);outline-offset:3px}
+.lookbook{margin-block-start:var(--space-2xl);padding-block-start:var(--space-md);
+  border-block-start:1px solid var(--color-grid-rule)}
+.lookbook h2{font-size:1rem;font-weight:600;letter-spacing:.02em;
+  line-height:var(--leading-heading);margin:0 0 var(--space-sm)}
+.lookbook-card{margin:0}
+.lookbook-card .eyebrow{margin-block-start:var(--space-xs)}
+/* W6 보완: 협찬 원본(1200×748, 인물 + 상품 패널)은 자르지 않는다. 룩북 격자만 1·2·3열(기사 .press-grid는 그대로) */
+.press-grid.lookbook-grid{gap:var(--grid-gutter)}
+@media(min-width:60rem){.press-grid.lookbook-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.lookbook-card .media--press{aspect-ratio:1200/748}
+.lookbook-card .brand-shot{object-fit:contain}
+/* B1 2026-10-25: 회사소개 KO 히어로 제목은 두 구절을 두 줄로(<br>). 13ch 폭 제한만 풀어 48rem 넘는 화면은 지금 글자 크기 그대로,
+ * 48rem 이하는 둘째 구절이 한 줄에 들어가도록 이 제목만 줄인다(최소 2rem=32px, 작업지시서 6-3 모바일 메인 카피). */
+html[lang="ko"] body[data-page="about"] .page-hero h1{max-width:none}
+@media(max-width:48rem){html[lang="ko"] body[data-page="about"] .page-hero h1{font-size:clamp(2rem,9vw,3.75rem)}}

@@ -1,7 +1,7 @@
 (() => {
   const lang = document.documentElement.lang;
   const page = document.body.dataset.page;
-  document.title = lang === 'ko' ? '아더앤컴퍼니' : 'Arthur & Company';
+  document.title = lang === 'ko' ? '아더앤컴퍼니' : 'Arthur&Co.';
   document.documentElement.classList.add('js');
   const asset = (path) => window.SHARE_ASSETS?.[path] || `../assets/media/${path}`;
 
@@ -79,6 +79,22 @@
     revealTargets.forEach((node) => observer.observe(node));
   }
 
+  // 브랜드 상세 갤러리와 BRANDS NEWS 룩북은 회사소개와 같은 큰 사진 보기를 연다.
+  // 이 창은 브랜드 다이얼로그 위에 쌓이므로 Esc·닫기·바깥 클릭은 큰 사진만 닫는다.
+  if (page === 'brands' || page === 'press') {
+    const viewer = document.createElement('dialog');
+    viewer.className = 'image-viewer';
+    viewer.innerHTML = '<div class="image-viewer-inner"><button type="button" aria-label="Close">×</button><img alt=""></div>';
+    document.body.append(viewer);
+    const viewerImage = viewer.querySelector('img');
+    const zoomable = '#brand-dialog .gallery-grid img, .lookbook-grid img';
+    const open = (image) => { viewerImage.src = image.src; viewerImage.alt = image.alt; viewerImage.decode().catch(() => {}).then(() => { if (!viewer.open) viewer.showModal(); }); };
+    document.addEventListener('click', (event) => { const image = event.target.closest?.(zoomable); if (image) open(image); });
+    document.addEventListener('keydown', (event) => { const image = event.target.closest?.(zoomable); if (image && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); open(image); } });
+    viewer.querySelector('button').addEventListener('click', () => viewer.close());
+    viewer.addEventListener('click', (event) => { if (event.target === viewer) viewer.close(); });
+  }
+
   if (page !== 'about') return;
 
   document.querySelectorAll('main .section').forEach((section) => {
@@ -90,7 +106,7 @@
     const address = lang === 'ko' ? '서울특별시 중구 창경궁로6 부성카멜리아 4층' : '4F, 6 Changgyeonggung-ro, Jung-gu, Seoul';
     const mapTitle = lang === 'ko' ? '오시는 길' : 'Location';
     const openLabel = lang === 'ko' ? 'Google Maps에서 열기' : 'Open in Google Maps';
-    legacyMap.innerHTML = `<div class="shell map-layout"><div class="map-copy"><p class="section-kicker">Arthur & Company</p><h2>${mapTitle}</h2><p>${address}</p><a class="outline-button" href="https://maps.google.com/?q=${encodeURIComponent(address)}" target="_blank" rel="noopener noreferrer">${openLabel}</a></div><iframe class="map-frame" title="${mapTitle}" src="https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>`;
+    legacyMap.innerHTML = `<div class="shell map-layout"><div class="map-copy"><p class="section-kicker">${lang === 'ko' ? 'Arthur & Company' : 'Arthur&Co.'}</p><h2>${mapTitle}</h2><p>${address}</p><a class="outline-button" href="https://maps.google.com/?q=${encodeURIComponent(address)}" target="_blank" rel="noopener noreferrer">${openLabel}</a></div><iframe class="map-frame" title="${mapTitle}" src="https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>`;
   }
 
   const copy = lang === 'ko' ? {
@@ -111,19 +127,19 @@
     ]
   } : {
     kicker: 'Company introduction',
-    businessTitle: 'From market entry to post-sales care',
-    businessLead: 'We support the full Korean-market journey: research, distribution strategy, marketing and post-sales management.',
-    channelsTitle: 'Distribution channels',
+    businessTitle: 'From market entry to after-sales care',
+    businessLead: 'We support every stage of a brand\'s journey in Korea: market research, distribution strategy, marketing and after-sales care.',
+    channelsTitle: 'Key distribution channels',
     channelsLead: 'Organized from the supplied company introduction and channel assets.',
     locationsTitle: 'Retail presence',
-    locationsLead: 'A selection of brand operations across duty-free and offline retail locations.',
+    locationsLead: 'Our brands in duty-free and retail stores.',
     business: [
-      ['Brand discovery', 'Identify promising brands and assess their fit for the Korean market.'],
-      ['Market research', 'Study market dynamics and competition to define the right entry path.'],
-      ['Distribution strategy', 'Plan operations for duty-free, department-store and online channels.'],
-      ['Promotion planning', 'Design channel-appropriate promotions and customer events.'],
-      ['Digital marketing', 'Run communications that connect brand awareness with conversion.'],
-      ['Post-sales care', 'Manage inspection, partnerships and customer support after purchase.']
+      ['Brand discovery', 'We identify promising brands and assess their fit for the Korean market.'],
+      ['Market research', 'We study market trends and competition to plan the right entry.'],
+      ['Distribution strategy', 'We build operating strategies for duty-free, department store and online channels.'],
+      ['Promotion planning', 'We plan promotions and events that suit each channel and its customers.'],
+      ['Digital marketing', 'We run digital communications that turn brand awareness into sales.'],
+      ['After-sales care', 'We manage product inspection, partnerships and customer support after the sale.']
     ]
   };
 
@@ -182,7 +198,7 @@
   document.querySelectorAll('.location-card img').forEach((image) => {
     image.tabIndex = 0;
     image.setAttribute('role', 'button');
-    const open = () => { viewerImage.src = image.src; viewerImage.alt = image.alt; viewer.showModal(); };
+    const open = () => { viewerImage.src = image.src; viewerImage.alt = image.alt; viewerImage.decode().catch(() => {}).then(() => { if (!viewer.open) viewer.showModal(); }); };
     image.addEventListener('click', open);
     image.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); } });
   });
