@@ -530,3 +530,9 @@ html[lang="ko"] body[data-page="about"] .page-hero h1{max-width:none}
 .privacy-list dt{font-weight:600}.privacy-list dd{margin:0}
 .privacy-policy h2{margin-block-start:var(--space-lg)}
 @media(max-width:30rem){.privacy-list{grid-template-columns:minmax(0,1fr)}.privacy-list dd{margin-block-end:var(--space-xs)}}
+/* 4차(10/26 고객 카톡): 주요 유통 채널 — 사이트별 흰 칸을 모두 같은 크기로, 열을 맞춘 격자 */
+.evidence-section .channel-grid:not(.channel-grid--compact){display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--space-xs)}
+.evidence-section .channel-grid:not(.channel-grid--compact) .channel-card,.evidence-section .channel-grid:not(.channel-grid--compact) .channel-card:nth-child(n){flex:none;min-width:0;min-height:0;aspect-ratio:2/1;padding:var(--space-sm);grid-column:auto}
+.evidence-section .channel-grid:not(.channel-grid--compact) .channel-card{overflow:hidden}.evidence-section .channel-grid:not(.channel-grid--compact) .channel-card img{width:auto;height:auto;max-width:72%;max-height:44px}
+@media(max-width:1024px){.evidence-section .channel-grid:not(.channel-grid--compact){grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:640px){.evidence-section .channel-grid:not(.channel-grid--compact){grid-template-columns:repeat(3,minmax(0,1fr))}.evidence-section .channel-grid:not(.channel-grid--compact) .channel-card img{max-width:80%;max-height:28px}}

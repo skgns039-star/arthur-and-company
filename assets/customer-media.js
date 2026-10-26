@@ -115,7 +115,6 @@
     businessTitle: '브랜드의 시작부터 판매 이후까지',
     businessLead: '시장 조사, 유통 전략, 마케팅, 사후 관리까지 브랜드의 한국 시장 운영 전반을 함께합니다.',
     channelsTitle: '주요 유통 채널',
-    channelsLead: '전달받은 회사 안내 자료와 유통채널 로고를 기준으로 정리했습니다.',
     locationsTitle: '오프라인 운영 현장',
     locationsLead: '면세점과 오프라인 매장에서 운영 중인 브랜드 현장입니다.',
     business: [
@@ -131,7 +130,6 @@
     businessTitle: 'From market entry to after-sales care',
     businessLead: 'We support every stage of a brand\'s journey in Korea: market research, distribution strategy, marketing and after-sales care.',
     channelsTitle: 'Key distribution channels',
-    channelsLead: 'Organized from the supplied company introduction and channel assets.',
     locationsTitle: 'Retail presence',
     locationsLead: 'Our brands in duty-free and retail stores.',
     business: [
@@ -146,7 +144,7 @@
 
   const channelCards = [...SITE_DATA.channels.local, ...SITE_DATA.channels.dutyfree];
   const locationCards = SITE_DATA.locations;
-  const html = `<section class="section evidence-section"><div class="shell"><p class="section-kicker">${copy.kicker}</p><div class="section-head"><h2>${copy.businessTitle}</h2><p>${copy.businessLead}</p></div><div class="business-grid">${copy.business.map((item,index)=>`<article class="business-item"><span class="index">0${index+1}</span><h3>${item[0]}</h3><p>${item[1]}</p></article>`).join('')}</div></div></section><section class="section section--tint evidence-section"><div class="shell"><div class="section-head"><h2>${copy.channelsTitle}</h2><p>${copy.channelsLead}</p></div><div class="channel-grid">${channelCards.map(c=>`<div class="channel-card"><img src="${asset(c.image)}" alt="${c.label}" loading="lazy"></div>`).join('')}</div></div></section><section class="section evidence-section"><div class="shell"><div class="section-head"><h2>${copy.locationsTitle}</h2><p>${copy.locationsLead}</p></div><div class="location-grid">${locationCards.map(l=>{const venue=lang==='ko'?l.venue:(l.venueEn||l.venue);return `<figure class="location-card"><img src="${asset(l.image)}" alt="${l.brand} · ${venue}" loading="lazy"><figcaption><strong>${l.brand}</strong><span>${venue}</span></figcaption></figure>`}).join('')}</div></div></section>`;
+  const html = `<section class="section evidence-section"><div class="shell"><p class="section-kicker">${copy.kicker}</p><div class="section-head"><h2>${copy.businessTitle}</h2><p>${copy.businessLead}</p></div><div class="business-grid">${copy.business.map((item,index)=>`<article class="business-item"><span class="index">0${index+1}</span><h3>${item[0]}</h3><p>${item[1]}</p></article>`).join('')}</div></div></section><section class="section section--tint evidence-section"><div class="shell"><div class="section-head"><h2>${copy.channelsTitle}</h2></div><div class="channel-grid">${channelCards.map(c=>`<div class="channel-card"><img src="${asset(c.image)}" alt="${c.label}" loading="lazy"></div>`).join('')}</div></div></section><section class="section evidence-section"><div class="shell"><div class="section-head"><h2>${copy.locationsTitle}</h2><p>${copy.locationsLead}</p></div><div class="location-grid">${locationCards.map(l=>{const venue=lang==='ko'?l.venue:(l.venueEn||l.venue);return `<figure class="location-card"><img src="${asset(l.image)}" alt="${l.brand} · ${venue}" loading="lazy"><figcaption><strong>${l.brand}</strong><span>${venue}</span></figcaption></figure>`}).join('')}</div></div></section>`;
   document.querySelector('main').insertAdjacentHTML('beforeend', html);
 
   const evidenceSections = document.querySelectorAll('.evidence-section');
