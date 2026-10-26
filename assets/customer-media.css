@@ -519,6 +519,9 @@ body[data-page="home"] .brand-card .link-row{margin-block-start:0}
  * 48rem 이하는 둘째 구절이 한 줄에 들어가도록 이 제목만 줄인다(최소 2rem=32px, 작업지시서 6-3 모바일 메인 카피). */
 html[lang="ko"] body[data-page="about"] .page-hero h1{max-width:none}
 @media(max-width:48rem){html[lang="ko"] body[data-page="about"] .page-hero h1{font-size:clamp(2rem,9vw,3.75rem)}}
+/* 3차 추가 2026-10-27: 개인정보처리방침 KO 제목이 13ch 폭 제한 때문에 PC에서 '개인정보처리방 / 침'으로 넘어가지 않게 한 줄 고정, 48rem 이하는 이 제목만 화면 폭에 맞춰 줄임 */
+html[lang="ko"] body[data-page="privacy"] .page-hero h1{max-width:none;white-space:nowrap}
+@media(max-width:48rem){html[lang="ko"] body[data-page="privacy"] .page-hero h1{font-size:min(clamp(2.5rem,12vw,3.75rem),calc((100vw - 2.5rem) / 8.6))}}
 /* 3차 C5: 동의 체크박스 옆 '내용 보기'와 수집 안내, 개인정보처리방침 */
 .consent-row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--space-xs) var(--space-md)}
 .consent-toggle{font-size:var(--text-caption,.875rem)}
