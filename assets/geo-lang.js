@@ -13,7 +13,7 @@
     if (a) set(PICK, a.getAttribute('hreflang'));
   }, true);
 
-  var m = location.pathname.match(/\/ko\/((?:index|about|brands|press|careers|contact)\.html)?$/);
+  var m = location.pathname.match(/\/ko\/((?:index|about|brands|press|careers|contact|privacy)\.html)?$/);
   if (!m || get(PICK) || /bot|crawl|spider|slurp|lighthouse|preview/i.test(navigator.userAgent)) return;
 
   function go(country) {

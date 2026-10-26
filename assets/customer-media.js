@@ -103,10 +103,11 @@
 
   const legacyMap = [...document.querySelectorAll('main .section')].find((section) => section.querySelector('a[href*="maps.google.com"]'));
   if (legacyMap) {
-    const address = lang === 'ko' ? '서울특별시 중구 창경궁로6 부성카멜리아 4층' : '4F, 6 Changgyeonggung-ro, Jung-gu, Seoul';
+    const address = lang === 'ko' ? '서울특별시 중구 창경궁로 6, 401호 (충무로5가, 부성빌딩)' : 'Room 401, Busung Bldg., 6 Changgyeonggung-ro, Jung-gu, Seoul, Republic of Korea';
+    const mapQuery = lang === 'ko' ? '서울특별시 중구 창경궁로 6' : '6 Changgyeonggung-ro, Jung-gu, Seoul';
     const mapTitle = lang === 'ko' ? '오시는 길' : 'Location';
     const openLabel = lang === 'ko' ? 'Google Maps에서 열기' : 'Open in Google Maps';
-    legacyMap.innerHTML = `<div class="shell map-layout"><div class="map-copy"><p class="section-kicker">${lang === 'ko' ? 'Arthur & Company' : 'Arthur&Co.'}</p><h2>${mapTitle}</h2><p>${address}</p><a class="outline-button" href="https://maps.google.com/?q=${encodeURIComponent(address)}" target="_blank" rel="noopener noreferrer">${openLabel}</a></div><iframe class="map-frame" title="${mapTitle}" src="https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>`;
+    legacyMap.innerHTML = `<div class="shell map-layout"><div class="map-copy"><p class="section-kicker">${lang === 'ko' ? 'Arthur & Company' : 'Arthur&Co.'}</p><h2>${mapTitle}</h2><p>${address}</p><a class="outline-button" href="https://maps.google.com/?q=${encodeURIComponent(mapQuery)}" target="_blank" rel="noopener noreferrer">${openLabel}</a></div><iframe class="map-frame" title="${mapTitle}" src="https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>`;
   }
 
   const copy = lang === 'ko' ? {
@@ -167,8 +168,9 @@
     const target = Number(number.textContent.trim());
     if (!Number.isFinite(target)) return;
     number.dataset.target = String(target);
+    const format = (value) => number.hasAttribute('data-year') ? String(value) : value.toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US');
     if (reducedMotion || !('IntersectionObserver' in window)) {
-      number.textContent = target.toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US');
+      number.textContent = format(target);
       return;
     }
     number.textContent = '0';
@@ -181,7 +183,7 @@
       const tick = (now) => {
         const progress = Math.min((now - start) / duration, 1);
         const value = Math.round(target * (1 - Math.pow(1 - progress, 3)));
-        entry.target.textContent = value.toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US');
+        entry.target.textContent = format(value);
         if (progress < 1) requestAnimationFrame(tick);
         else entry.target.classList.replace('is-counting', 'is-counted');
       };
