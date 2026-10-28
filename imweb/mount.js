@@ -186,7 +186,7 @@
   // Our contact page sits above a native Imweb form widget. That widget is kept in the DOM but
   // taken out of flow and made invisible; our form's values are copied into it and Imweb's own
   // SITE_FORM.confirmInputForm sends them. Result = Imweb's $.ajax POST /ajax/form_add.cm reply
-  // (site_form.js submit(): result.msg === 'SUCCESS'), read through jQuery's global ajaxComplete.
+  // (site_form.js submit(): result.msg === 'SUCCESS'), read via $.ajaxPrefilter before Imweb's handlers.
   function imwebForm() {
     return document.getElementById('arthur-imweb') && document.querySelector('form[id^="addForm"]');
   }
@@ -223,8 +223,8 @@
       if (form.querySelector('[aria-invalid="true"]')) return;
       busy = true; btn.disabled = true; status.textContent = T.sending;
       var type = form.querySelector('input[name="type"]:checked');
-      send(form, stuck).then(function () {
-        ga('generate_lead', { form: 'contact', inquiry_type: type ? type.value : '', lang: lang });
+      send(form, stuck).then(function (reply) {
+        leadOnce(reply, { form: 'contact', inquiry_type: type ? type.value : '', lang: lang });
         form.reset();
         if (fileLabel) fileLabel.textContent = fileText;
         status.textContent = T.ok;
@@ -259,7 +259,30 @@
       if (stuck) $.ajax({ type: 'POST', data: $(f).serialize(), url: '/ajax/form_add.cm', dataType: 'json', cache: false });
       else SITE_FORM.confirmInputForm(code, 'N');
       return result;
-    }).then(function () { resetImweb($, f); }, function (why) { SITE_FORM.hideModal(); throw why; });
+    }).then(function (reply) { resetImweb($, f); return reply; }, function (why) { SITE_FORM.hideModal(); throw why; });
+  }
+  // One generate_lead per Imweb inquiry (keyed by the reply's idx, also across reloads in this tab).
+  function leadOnce(reply, params) {
+    var key = 'arthurco-leads', id = reply && reply.idx ? String(reply.idx) : '', seen = [];
+    try { seen = (sessionStorage.getItem(key) || '').split(','); } catch (e) {}
+    if (id && seen.indexOf(id) >= 0) return;
+    if (id) try { sessionStorage.setItem(key, seen.concat(id).slice(-20).join(',')); } catch (e) {}
+    ga('generate_lead', params);
+  }
+  // Read Imweb's own requests before any Imweb callback runs: $.ajaxPrefilter attaches our done/fail
+  // ahead of the request's success option, so an exception in Imweb's reply handling (or in its global
+  // ajaxError handler) can no longer hide the result from us.
+  var watchers = [];
+  function watch($, re, fn) {
+    if (!watch.on) {
+      watch.on = true;
+      $.ajaxPrefilter(function (o, oo, xhr) {
+        watchers.slice().forEach(function (w) { if (w.re.test(o.url || '')) w.fn(xhr); });
+      });
+    }
+    var w = { re: re, fn: fn };
+    watchers.push(w);
+    return function () { var i = watchers.indexOf(w); if (i >= 0) watchers.splice(i, 1); };
   }
   function errorModal(f) {
     var m = document.getElementById('input_form_error_modal_' + f.id.replace('addForm', ''));
@@ -275,9 +298,7 @@
     input.files = dt.files;
     // Imweb reports upload errors with showModal('error', msg) but without the widget code, so no
     // modal ever shows; read the upload reply itself instead.
-    var failed = '';
-    $(document).on('ajaxSend.arthurUpload', function (e, xhr, s) {
-      if (!/\/ajax\/form_file_upload\.cm/.test(s.url || '')) return;
+    var failed = '', stop = watch($, /\/ajax\/form_file_upload\.cm/, function (xhr) {
       xhr.done(function (r) { var x = r && r['form_file_' + code] && r['form_file_' + code][0]; if (!x || x.error || !(x.tmp_idx > 0)) failed = (x && x.error) || 'bad reply'; })
         .fail(function () { failed = 'request failed'; });
     });
@@ -285,22 +306,18 @@
     return poll(function () {
       if (failed) throw 'upload: ' + failed;
       return group.querySelector('._temp_file').value;
-    }, 60000, 'upload timed out').then(function (v) { $(document).off('ajaxSend.arthurUpload'); return v; },
-      function (why) { $(document).off('ajaxSend.arthurUpload'); throw why; });
+    }, 60000, 'upload timed out').then(function (v) { stop(); return v; }, function (why) { stop(); throw why; });
   }
   function outcome($, f) {
     return new Promise(function (resolve, reject) {
-      var settled = false, finish = function (ok, why) {
+      var settled = false, stop, finish = function (ok, why) {
         if (settled) return; settled = true;
-        $(document).off('ajaxSend.arthurImweb');
-        SITE_FORM.hideModal();
-        ok ? resolve() : reject(why);
+        stop();
+        setTimeout(SITE_FORM.hideModal, 0); // after Imweb's own callbacks have shown (hidden) modals
+        ok ? resolve(why) : reject(why);
       };
-      // Hook the request object itself: its done/fail run before jQuery's global ajaxError/ajaxComplete
-      // events, which Imweb's own global ajaxError handler can stop from firing.
-      $(document).on('ajaxSend.arthurImweb', function (e, xhr, s) {
-        if (!/\/ajax\/form_add\.cm/.test(s.url || '')) return;
-        xhr.done(function (r) { r && r.msg === 'SUCCESS' ? finish(true) : finish(false, (r && r.msg) || 'bad reply'); })
+      stop = watch($, /\/ajax\/form_add\.cm/, function (xhr) {
+        xhr.done(function (r) { r && r.msg === 'SUCCESS' ? finish(true, r) : finish(false, (r && r.msg) || 'bad reply'); })
           // a failed request leaves Imweb's private "submitting" lock on, so later tries must bypass it
           .fail(function () { finish(false, 'stuck'); });
       });
