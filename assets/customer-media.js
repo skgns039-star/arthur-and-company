@@ -103,7 +103,7 @@
 
   const legacyMap = [...document.querySelectorAll('main .section')].find((section) => section.querySelector('a[href*="maps.google.com"]'));
   if (legacyMap) {
-    const address = lang === 'ko' ? '서울특별시 중구 창경궁로 6, 401호 (충무로5가, 부성빌딩)' : 'Room 401, Busung Bldg., 6 Changgyeonggung-ro, Jung-gu, Seoul, Republic of Korea';
+    const address = lang === 'ko' ? '서울특별시 중구 창경궁로 6, 4층 (충무로5가, 부성빌딩)' : '4F, Busung Bldg., 6 Changgyeonggung-ro, Jung-gu, Seoul, Republic of Korea';
     const mapQuery = lang === 'ko' ? '서울특별시 중구 창경궁로 6' : '6 Changgyeonggung-ro, Jung-gu, Seoul';
     const mapTitle = lang === 'ko' ? '오시는 길' : 'Location';
     const openLabel = lang === 'ko' ? 'Google Maps에서 열기' : 'Open in Google Maps';
