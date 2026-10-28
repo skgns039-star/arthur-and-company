@@ -61,7 +61,8 @@
   }
   const revealTargets = document.querySelectorAll('.section, .page-hero, .hero-copy, .brand-card, .press-card');
   revealTargets.forEach((node) => node.classList.add('reveal'));
-  if (reducedMotion || window.matchMedia('(max-width: 48rem)').matches || !('IntersectionObserver' in window)) {
+  // 10/28 owner: phones get the same scroll reveal as PC (reduced motion still shows everything at once).
+  if (reducedMotion || !('IntersectionObserver' in window)) {
     revealTargets.forEach((node) => node.classList.add('is-visible'));
   } else {
     const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
