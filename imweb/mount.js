@@ -363,6 +363,21 @@
     });
   }
 
+  // ---- SEO head for our 14 pages only: page language, canonical (https, primary domain), hreflang --
+  function seoHead(routes, lang, page) {
+    var origin = routes.origin || location.origin, head = document.head;
+    document.documentElement.lang = lang;
+    var canon = head.querySelector('link[rel="canonical"]');
+    if (!canon) { canon = document.createElement('link'); canon.rel = 'canonical'; head.appendChild(canon); }
+    canon.href = origin + routes[lang][page];
+    [].forEach.call(head.querySelectorAll('link[rel="alternate"][data-arthur]'), function (l) { l.remove(); });
+    [['ko', 'ko'], ['en', 'en'], ['x-default', 'en']].forEach(function (x) {
+      var l = document.createElement('link');
+      l.rel = 'alternate'; l.hreflang = x[0]; l.href = origin + routes[x[1]][page]; l.setAttribute('data-arthur', '');
+      head.appendChild(l);
+    });
+  }
+
   // Only on pages that hold #arthur-imweb (this runs from mount): GitHub Pages has no back-to-top
   // button and no right-click/copy blocking, so Imweb's site-wide versions are switched off here.
   function imwebChrome(host) {
@@ -407,6 +422,10 @@
     unzoom();
     addEventListener('resize', unzoom);
     imwebChrome(host);
+    seoHead(routes, lang, page);
+    // The snippet may carry a declarative <template shadowrootmode="open"> plus a plain-text copy of the
+    // page in the light DOM for crawlers that do not run JavaScript. With a shadow root and no <slot>,
+    // browsers never render that copy; we reuse the root the parser already attached.
     var shadow = host.shadowRoot || host.attachShadow({ mode: 'open' });
     shadow.innerHTML = '<style></style><div data-ac-html lang="' + lang + '"><div data-ac-body data-page="' + page + '"><div id="app"></div></div></div>';
     var htmlEl = shadow.querySelector('[data-ac-html]'), bodyEl = shadow.querySelector('[data-ac-body]');

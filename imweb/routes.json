@@ -1,4 +1,5 @@
 {
+  "origin": "https://arthurnco.com",
   "ko": {"home": "/home", "about": "/about", "brands": "/brands", "press": "/press", "careers": "/careers", "contact": "/contact", "privacy": "/privacy"},
   "en": {"home": "/en", "about": "/en-about", "brands": "/en-brands", "press": "/en-press", "careers": "/en-careers", "contact": "/en-contact", "privacy": "/en-privacy"}
 }
