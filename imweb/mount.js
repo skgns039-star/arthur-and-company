@@ -26,9 +26,12 @@
 
   function ready(fn) { document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', fn) : fn(); }
 
+  hideImwebForm(); // as early as possible, so the Imweb form never shows
+
   ready(function () {
     var host = document.getElementById('arthur-imweb');
     if (!host) return;
+    hideImwebForm();
     var page = host.getAttribute('data-page') || 'home';
     if (page === 'index') page = 'home';
     var lang = host.getAttribute('data-lang') === 'en' ? 'en' : 'ko';
@@ -179,6 +182,170 @@
     });
   }
 
+  // ---- Contact → Imweb 입력폼 (콘텐츠 > 입력폼) ---------------------------------------------
+  // Our contact page sits above a native Imweb form widget. That widget is kept in the DOM but
+  // taken out of flow and made invisible; our form's values are copied into it and Imweb's own
+  // SITE_FORM.confirmInputForm sends them. Result = Imweb's $.ajax POST /ajax/form_add.cm reply
+  // (site_form.js submit(): result.msg === 'SUCCESS'), read through jQuery's global ajaxComplete.
+  function imwebForm() {
+    return document.getElementById('arthur-imweb') && document.querySelector('form[id^="addForm"]');
+  }
+  function hideImwebForm() {
+    var f = imwebForm(), host = document.getElementById('arthur-imweb');
+    if (!f) return;
+    var el = f.closest('[doz_type="widget"]') || f;
+    while (el.parentElement && el.parentElement !== document.body && !el.parentElement.contains(host)) el = el.parentElement;
+    'position:absolute;left:-10000px;top:0;width:1px;height:1px;overflow:hidden;margin:0;padding:0;visibility:hidden'
+      .split(';').forEach(function (d) { var kv = d.split(':'); el.style.setProperty(kv[0], kv[1], 'important'); });
+    el.setAttribute('aria-hidden', 'true');
+    if (!document.getElementById('arthur-imweb-form-css')) {
+      var st = document.createElement('style');
+      st.id = 'arthur-imweb-form-css';
+      st.textContent = '[id^="input_form_complete_modal_"],[id^="input_form_error_modal_"]{display:none!important}';
+      document.head.appendChild(st);
+    }
+  }
+  function ga(name, params) { if (typeof window.gtag === 'function') window.gtag('event', name, params); }
+  var COPY = {
+    ko: { sending: '보내는 중입니다.', ok: '문의가 접수되었습니다. 확인 후 연락드리겠습니다.', fail: '전송에 실패했습니다. 잠시 후 다시 시도하거나 arthur@arthurnco.com으로 보내 주세요.' },
+    en: { sending: 'Sending…', ok: 'Your inquiry has been sent. We will get back to you soon.', fail: 'Sending failed. Please try again later or email arthur@arthurnco.com.' }
+  };
+  var SHAPE = ['radio', 'input', 'input', 'input', 'email', 'input', 'textarea', 'file']; // Imweb group ids, in order
+  var OURS = ['company', 'website', 'name', 'email', 'phone', 'message'];                 // our fields after the radio
+  function contactForm(shadow, lang) {
+    var form = shadow.querySelector('form.contact-form');
+    if (!form) return;
+    var T = COPY[lang], status = form.querySelector('.form-status'), btn = form.querySelector('button[type="submit"]');
+    var fileLabel = form.querySelector('.file-label'), fileText = fileLabel ? fileLabel.textContent : '';
+    var busy = false, stuck = false;
+    form.addEventListener('submit', function () { // runs after app.js's own validation handler
+      if (busy) { status.textContent = T.sending; return; }
+      if (form.querySelector('[aria-invalid="true"]')) return;
+      busy = true; btn.disabled = true; status.textContent = T.sending;
+      var type = form.querySelector('input[name="type"]:checked');
+      send(form, stuck).then(function () {
+        ga('generate_lead', { form: 'contact', inquiry_type: type ? type.value : '', lang: lang });
+        form.reset();
+        if (fileLabel) fileLabel.textContent = fileText;
+        status.textContent = T.ok;
+      }, function (why) {
+        if (why === 'stuck') stuck = true;
+        console.error('[arthur-imweb] inquiry not sent:', why);
+        status.textContent = T.fail;
+      }).then(function () { busy = false; btn.disabled = false; });
+    });
+  }
+  function send(ours, stuck) {
+    var $ = window.jQuery, f = imwebForm();
+    if (!f || !$ || !window.SITE_FORM) return Promise.reject('no Imweb form on this page');
+    var groups = [].filter.call(f.querySelectorAll('.form-group'), function (g) { return !/^(privacy|thirdparty)/.test(g.id); });
+    var shape = groups.map(function (g) { return g.id.split('_')[0]; }).join();
+    if (shape !== SHAPE.join()) return Promise.reject('Imweb form fields changed: ' + shape);
+    // Cross-check labels (warn only: wording may differ slightly between the two forms)
+    var ourLabels = [ours.querySelector('legend')].concat(OURS.map(function (id) { return ours.querySelector('label[for="' + id + '"]'); }));
+    ourLabels.forEach(function (l, i) {
+      var a = (l ? l.textContent : '').replace(/[*\s]/g, ''), b = (groups[i].querySelector('label') || {}).textContent || '';
+      if (a.toLowerCase() !== b.replace(/[*\s]/g, '').toLowerCase()) console.warn('[arthur-imweb] label differs', a, '≠', b.trim());
+    });
+    var radios = ours.querySelectorAll('input[name="type"]'), imRadios = groups[0].querySelectorAll('input[type="radio"]');
+    [].forEach.call(radios, function (r, i) { if (imRadios[i]) imRadios[i].checked = r.checked; });
+    OURS.forEach(function (id, i) { groups[i + 1].querySelector('input,textarea').value = ours.querySelector('#' + id).value; });
+    var consent = f.querySelector('#privacy input[type="checkbox"]');
+    if (consent) consent.checked = true;
+    var code = f.id.replace('addForm', ''), file = ours.querySelector('#attachment').files[0];
+    SITE_FORM.hideModal();
+    return (file ? upload($, groups[7], file) : Promise.resolve()).then(function () {
+      var result = outcome($, f);
+      if (stuck) $.ajax({ type: 'POST', data: $(f).serialize(), url: '/ajax/form_add.cm', dataType: 'json', cache: false });
+      else SITE_FORM.confirmInputForm(code, 'N');
+      return result;
+    }).then(function () { resetImweb($, f); }, function (why) { SITE_FORM.hideModal(); throw why; });
+  }
+  function errorModal(f) {
+    var m = document.getElementById('input_form_error_modal_' + f.id.replace('addForm', ''));
+    return m && m.style.display !== 'none' ? (m.textContent.trim() || 'error') : ''; // Imweb shows it with $.show()
+  }
+  function upload($, group, file) {
+    if (file.size > 1e8) return Promise.reject('file over 100MB');
+    var code = group.id.split('_')[1];
+    if (!$(group).data('blueimp-fileupload') && SITE_FORM.itemFileUpload) SITE_FORM.itemFileUpload($(group), code);
+    group.querySelector('._temp_file').value = '';
+    var input = group.querySelector('input[type="file"]'), dt = new DataTransfer();
+    dt.items.add(file);
+    input.files = dt.files;
+    // Imweb reports upload errors with showModal('error', msg) but without the widget code, so no
+    // modal ever shows; read the upload reply itself instead.
+    var failed = '';
+    $(document).on('ajaxSend.arthurUpload', function (e, xhr, s) {
+      if (!/\/ajax\/form_file_upload\.cm/.test(s.url || '')) return;
+      xhr.done(function (r) { var x = r && r['form_file_' + code] && r['form_file_' + code][0]; if (!x || x.error || !(x.tmp_idx > 0)) failed = (x && x.error) || 'bad reply'; })
+        .fail(function () { failed = 'request failed'; });
+    });
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    return poll(function () {
+      if (failed) throw 'upload: ' + failed;
+      return group.querySelector('._temp_file').value;
+    }, 60000, 'upload timed out').then(function (v) { $(document).off('ajaxSend.arthurUpload'); return v; },
+      function (why) { $(document).off('ajaxSend.arthurUpload'); throw why; });
+  }
+  function outcome($, f) {
+    return new Promise(function (resolve, reject) {
+      var settled = false, finish = function (ok, why) {
+        if (settled) return; settled = true;
+        $(document).off('ajaxSend.arthurImweb');
+        SITE_FORM.hideModal();
+        ok ? resolve() : reject(why);
+      };
+      // Hook the request object itself: its done/fail run before jQuery's global ajaxError/ajaxComplete
+      // events, which Imweb's own global ajaxError handler can stop from firing.
+      $(document).on('ajaxSend.arthurImweb', function (e, xhr, s) {
+        if (!/\/ajax\/form_add\.cm/.test(s.url || '')) return;
+        xhr.done(function (r) { r && r.msg === 'SUCCESS' ? finish(true) : finish(false, (r && r.msg) || 'bad reply'); })
+          // a failed request leaves Imweb's private "submitting" lock on, so later tries must bypass it
+          .fail(function () { finish(false, 'stuck'); });
+      });
+      poll(function () { var err = errorModal(f); if (err) throw err; return settled; }, 30000, 'no reply from Imweb')
+        .catch(function (why) { finish(false, why); });
+    });
+  }
+  function poll(check, ms, timeoutMsg) {
+    var t0 = Date.now();
+    return new Promise(function (resolve, reject) {
+      (function tick() {
+        try { var v = check(); if (v) return resolve(v); } catch (e) { return reject(e); }
+        if (Date.now() - t0 > ms) return reject(timeoutMsg);
+        setTimeout(tick, 150);
+      })();
+    });
+  }
+  function resetImweb($, f) {
+    f.reset();
+    [].forEach.call(f.querySelectorAll('._temp_file,._upload_file'), function (i) { i.value = ''; });
+    if (window.TOKEN && TOKEN.makeToken) TOKEN.makeToken(86400, 'form', function (token, key) {
+      $(f).find('#input_form_token_obj ._tk_obj').val(token);
+      $(f).find('#input_form_token_obj ._tk_key_obj').val(key);
+    });
+  }
+
+  // ---- Press search → GA4 (no personal data) --------------------------------------------
+  function pressAnalytics(shadow) {
+    var input = shadow.querySelector('#press-search'), filter = shadow.querySelector('#brand-filter'), sent = {}, timer;
+    if (!input) return;
+    var fire = function () {
+      clearTimeout(timer);
+      var term = input.value.trim(), key = term.toLowerCase();
+      if (term.length < 2 || sent[key] || /@|\d[\d\s().-]{6,}\d/.test(term)) return; // skip emails / phone numbers
+      sent[key] = 1;
+      ga('search', { search_term: term });
+    };
+    input.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(fire, 1500); });
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') fire(); });
+    input.addEventListener('blur', fire);
+    if (filter) filter.addEventListener('change', function () {
+      if (filter.value) ga('select_content', { content_type: 'brand_filter', item_id: filter.value });
+    });
+  }
+
   // Only on pages that hold #arthur-imweb (this runs from mount): GitHub Pages has no back-to-top
   // button and no right-click/copy blocking, so Imweb's site-wide versions are switched off here.
   function imwebChrome(host) {
@@ -243,6 +410,8 @@
         catch (e) { console.error('[arthur-imweb] ' + f[0], e); }
       });
       rewriteLinks(shadow, routes, lang);
+      if (page === 'contact') contactForm(shadow, lang);
+      if (page === 'press') pressAnalytics(shadow);
       new MutationObserver(function () { rewriteLinks(shadow, routes, lang); }).observe(shadow, { subtree: true, childList: true });
       // geo-lang.js: a visitor who picks KO/EN keeps that choice.
       shadow.addEventListener('click', function (e) {
