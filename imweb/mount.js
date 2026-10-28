@@ -179,10 +179,50 @@
     });
   }
 
+  // Only on pages that hold #arthur-imweb (this runs from mount): GitHub Pages has no back-to-top
+  // button and no right-click/copy blocking, so Imweb's site-wide versions are switched off here.
+  function imwebChrome(host) {
+    var st = document.createElement('style');
+    st.textContent = 'a.btn_gotop{display:none!important}';
+    document.head.appendChild(st);
+    var unblock = function () {
+      [document, document.body, document.documentElement].forEach(function (n) {
+        n.oncontextmenu = n.onselectstart = n.ondragstart = n.oncopy = null;
+      });
+      var $ = window.jQuery, ev = $ && $._data && $._data(document, 'events');
+      if (ev) ['contextmenu', 'keydown', 'selectstart', 'dragstart', 'copy'].forEach(function (type) {
+        (ev[type] || []).slice().forEach(function (h) {
+          var f = String(h.handler);
+          // Imweb's protection: contextmenu → return false; keydown → block Ctrl/Cmd+C (keyCode 67)
+          if (type === 'keydown' ? /keyCode\s*==\s*67/.test(f) : type !== 'contextmenu' || /return\s+false/.test(f)) $(document).off(type, h.handler);
+        });
+      });
+      for (var e = host.parentElement; e; e = e.parentElement) {
+        var c = getComputedStyle(e);
+        if (c.userSelect === 'none' || c.webkitUserSelect === 'none') {
+          e.style.setProperty('user-select', 'auto', 'important');
+          e.style.setProperty('-webkit-user-select', 'auto', 'important');
+        }
+      }
+    };
+    unblock();
+    addEventListener('load', unblock);
+  }
+
   function mount(host, routes, lang, page) {
     var s = host.style;
     'display:block;margin:0;padding:0;border:0;width:auto;max-width:none;min-width:0;height:auto;min-height:0;overflow:visible;transform:none;position:static;float:none'
       .split(';').forEach(function (d) { var kv = d.split(':'); s.setProperty(kv[0], kv[1], 'important'); });
+    // Imweb's site CSS zooms the whole body to 0.85 between 767px and 1024px
+    // (custom.cm: body:not(.video_fullpage){zoom:.85}). Undo it on our box so 1px stays 1px.
+    var unzoom = function () {
+      var z = 1, e = host.parentElement;
+      for (; e; e = e.parentElement) z *= parseFloat(getComputedStyle(e).zoom) || 1;
+      if (z === 1) s.removeProperty('zoom'); else s.setProperty('zoom', String(1 / z), 'important');
+    };
+    unzoom();
+    addEventListener('resize', unzoom);
+    imwebChrome(host);
     var shadow = host.shadowRoot || host.attachShadow({ mode: 'open' });
     shadow.innerHTML = '<style></style><div data-ac-html lang="' + lang + '"><div data-ac-body data-page="' + page + '"><div id="app"></div></div></div>';
     var htmlEl = shadow.querySelector('[data-ac-html]'), bodyEl = shadow.querySelector('[data-ac-body]');
